@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoundIn — UI Intermedio Tutorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
+<script>hljs.highlightAll();</script>
+<style>
+:root{--primary:#6B45C2;--primary-dark:#4A2D99;--primary-light:#EDE8FA;--bg:#F8F7FF;--surface:#fff;--text:#1A1A2E;--text-secondary:#5A5A7A;--border:#E0DBFF;--success:#2E7D32;--success-bg:#E8F5E9;--warning-bg:#FFF8E1;--sidebar-width:280px;--font-body:'Sora',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:15px;line-height:1.7}
+.sidebar{width:var(--sidebar-width);background:var(--surface);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;display:flex;flex-direction:column;z-index:100}
+.sidebar-header{background:var(--primary);padding:24px 20px;color:#fff}
+.sidebar-header .icon{width:40px;height:40px;background:rgba(255,255,255,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+.sidebar-header h1{font-size:18px;font-weight:700}
+.sidebar-header p{font-size:12px;opacity:.8;margin-top:4px}
+.sidebar nav{padding:16px 0}
+.nav-section{padding:8px 20px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary)}
+.nav-link{display:block;padding:8px 20px;color:var(--text-secondary);text-decoration:none;font-size:13px;border-left:3px solid transparent;transition:all .15s}
+.nav-link:hover,.nav-link.active{background:var(--primary-light);color:var(--primary);border-left-color:var(--primary)}
+.nav-link.active{font-weight:600}
+.nav-link .num{display:inline-block;width:20px;height:20px;background:var(--primary);color:#fff;border-radius:50%;font-size:10px;font-weight:700;text-align:center;line-height:20px;margin-right:8px}
+.main{margin-left:var(--sidebar-width);flex:1;max-width:920px;padding:48px 56px}
+.hero{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);border-radius:20px;padding:48px;color:#fff;margin-bottom:48px;position:relative;overflow:hidden}
+.hero::before{content:'♪';position:absolute;right:48px;top:24px;font-size:120px;opacity:.08}
+.hero .badge{display:inline-block;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;letter-spacing:.5px;margin-bottom:16px}
+.hero h1{font-size:36px;font-weight:700;letter-spacing:-1px;line-height:1.2;margin-bottom:16px}
+.hero p{font-size:16px;opacity:.85;max-width:500px;line-height:1.6}
+.hero-meta{display:flex;gap:24px;margin-top:32px}
+.hero-meta-item{display:flex;flex-direction:column}
+.hero-meta-item .label{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:.5px}
+.hero-meta-item .value{font-size:18px;font-weight:700}
+.section{margin-bottom:64px;scroll-margin-top:24px}
+.section-title{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.section-title .cn{display:inline-flex;width:36px;height:36px;background:var(--primary);color:#fff;border-radius:10px;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.section-subtitle{color:var(--text-secondary);font-size:14px;margin-bottom:32px;padding-left:48px}
+.step-title{font-size:18px;font-weight:600;margin:40px 0 12px;display:flex;align-items:center;gap:10px}
+.step-title::before{content:attr(data-step);display:inline-flex;min-width:28px;height:28px;background:var(--primary-light);color:var(--primary);border-radius:8px;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;padding:0 6px}
+p{margin-bottom:16px}
+.location-hint{background:#E8EAF6;border-left:4px solid #5C6BC0;border-radius:0 8px 8px 0;padding:12px 16px;margin:20px 0 4px;font-size:13px;color:#1A237E;display:flex;align-items:flex-start;gap:8px}
+.location-hint::before{content:'📍';flex-shrink:0}
+pre{margin:4px 0 20px;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.12)}
+pre code{font-family:var(--font-code)!important;font-size:13px!important;line-height:1.65!important;padding:24px!important}
+.code-label{background:#1e2229;color:#7c8291;font-family:var(--font-code);font-size:11px;padding:8px 24px;border-bottom:1px solid #3a3f4b;display:flex;align-items:center;gap:8px}
+.code-label::before{content:'';display:inline-block;width:8px;height:8px;background:var(--primary);border-radius:50%}
+code:not(pre code){background:var(--primary-light);color:var(--primary-dark);padding:2px 7px;border-radius:5px;font-family:var(--font-code);font-size:13px}
+.param-list{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin:4px 0 24px}
+.param-list-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-secondary);margin-bottom:14px}
+.param-item{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;padding:8px 0;border-bottom:1px solid var(--border)}
+.param-item:last-child{border-bottom:none;padding-bottom:0}
+.param-name{font-family:var(--font-code);font-size:13px;color:var(--primary-dark);font-weight:600;white-space:nowrap;padding-top:1px}
+.param-desc{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.callout{padding:20px 24px;border-radius:12px;margin:24px 0;border-left:4px solid}
+.callout-title{font-weight:700;font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.callout p{margin-bottom:0;font-size:14px}
+.callout ul{font-size:14px;padding-left:20px}
+.callout li{margin-bottom:4px}
+.callout.info{background:#E8EAF6;border-color:#5C6BC0;color:#1A237E}
+.callout.warning{background:var(--warning-bg);border-color:#F9A825;color:#5D4037}
+.callout.tip{background:var(--primary-light);border-color:var(--primary);color:var(--primary-dark)}
+.checkpoint{background:var(--success-bg);border:1px solid #A5D6A7;border-radius:12px;padding:24px;margin:32px 0}
+.checkpoint-title{font-weight:700;color:var(--success);font-size:15px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.checkpoint ul{list-style:none;padding:0}
+.checkpoint li{padding:6px 0;font-size:14px;color:#2E7D32;display:flex;align-items:flex-start;gap:8px}
+.checkpoint li::before{content:'✅';flex-shrink:0}
+.assignment{background:var(--surface);border:2px solid var(--primary);border-radius:16px;padding:32px;margin:32px 0}
+.assignment-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:16px}
+.assignment-title{font-size:20px;font-weight:700;color:var(--primary)}
+.assignment-badge{background:var(--primary);color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+.assignment h4{font-size:13px;font-weight:700;color:var(--text);margin:20px 0 8px;text-transform:uppercase;letter-spacing:.5px}
+.assignment ul,.assignment ol{padding-left:20px;font-size:14px}
+.assignment li{margin-bottom:6px}
+.extra-challenge{background:var(--warning-bg);border:1px solid #F9A825;border-radius:10px;padding:20px;margin-top:20px}
+.extra-challenge-title{font-weight:700;color:#E65100;font-size:14px;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;margin:24px 0;font-size:14px}
+th{background:var(--primary);color:#fff;padding:12px 16px;text-align:left;font-weight:600}
+td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:nth-child(even) td{background:var(--primary-light)}
+.outcome-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin:12px 0;display:flex;align-items:flex-start;gap:12px}
+.outcome-number{display:inline-flex;min-width:28px;height:28px;background:var(--primary);color:#fff;border-radius:50%;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.outcome-text{font-size:15px;font-weight:500;line-height:1.5}
+hr{border:none;border-top:1px solid var(--border);margin:56px 0}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="icon">♪</div>
+    <h1>SoundIn</h1>
+    <p>UI Intermedio Tutorial</p>
+  </div>
+  <nav>
+    <div class="nav-section">Overview</div>
+    <a class="nav-link" href="#intro">Introduction</a>
+    <a class="nav-link" href="#distribution">Class Distribution</a>
+    <a class="nav-link" href="#outcomes">Learning Outcomes</a>
+    <div class="nav-section">Chapters</div>
+    <a class="nav-link" href="#cap1"><span class="num">1</span>MaterialTheme Theory</a>
+    <a class="nav-link" href="#cap2"><span class="num">2</span>Theme Setup</a>
+    <a class="nav-link" href="#cap3"><span class="num">3</span>Login UI</a>
+    <a class="nav-link" href="#cap4"><span class="num">4</span>LoginViewModel</a>
+    <a class="nav-link" href="#cap5"><span class="num">5</span>Register Screen</a>
+    <a class="nav-link" href="#cap6"><span class="num">6</span>Navigation</a>
+    <div class="nav-section">Assignments</div>
+    <a class="nav-link" href="#act1">Activity 1 — Login UI</a>
+    <a class="nav-link" href="#act2">Activity 2 — ViewModels</a>
+    <a class="nav-link" href="#act3">Activity 3 — Register</a>
+    <a class="nav-link" href="#act4">Activity 4 — Navigation</a>
+    <div class="nav-section">Evaluation</div>
+    <a class="nav-link" href="#forums">Discussion Forums</a>
+    <a class="nav-link" href="#exam">Final Exam</a>
+  </nav>
+</aside>
+
+<main class="main">
+
+<div class="hero">
+  <div class="badge">UI INTERMEDIO</div>
+  <h1>SoundIn App<br>Login &amp; Register</h1>
+  <p>Build a fully functional authentication flow using Jetpack Compose, Material 3, ViewModels and Navigation Compose.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><span class="label">Classes</span><span class="value">4</span></div>
+    <div class="hero-meta-item"><span class="label">Hours</span><span class="value">12</span></div>
+    <div class="hero-meta-item"><span class="label">Screens</span><span class="value">3</span></div>
+    <div class="hero-meta-item"><span class="label">Project</span><span class="value">SoundInP1</span></div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<section class="section" id="intro">
+  <h2 class="section-title"><span class="cn">→</span>Introduction</h2>
+  <div class="section-subtitle">What you will build and why</div>
+  <p>In this course, students move beyond the theory of UX/UI design and focus on the practical implementation of user interfaces for Android applications. Using Google's Material Design 3 principles, students will develop a fully functional authentication flow — Login Screen, Register Screen and a Main Screen — for the SoundIn music app.</p>
+  <p>Emphasis is placed on integrating state management with ViewModels, form validation, and connecting screens using Navigation Compose. By the end of the course, students will be able to build interactive, stateful Android screens from scratch.</p>
+  <table>
+    <tr><th>Screen</th><th>Purpose</th><th>Chapter</th></tr>
+    <tr><td><code>LoginScreen</code></td><td>Email + password login with validation and Snackbar feedback</td><td>Cap. 3</td></tr>
+    <tr><td><code>RegisterScreen</code></td><td>Full registration form with DatePickerDialog, ExposedDropdownMenuBox and back-navigation protection</td><td>Cap. 5</td></tr>
+    <tr><td><code>MainScreen</code></td><td>Post-authentication destination — expanded in UI Avanzado</td><td>Cap. 6</td></tr>
+  </table>
+</section>
+
+<hr>
+
+<!-- DISTRIBUTION -->
+<section class="section" id="distribution">
+  <h2 class="section-title"><span class="cn">→</span>Class Distribution</h2>
+  <div class="section-subtitle">4 classes × 3 hours each</div>
+  <table>
+    <tr><th>Class</th><th>Content</th><th>Assignment</th></tr>
+    <tr><td><strong>Class 1</strong></td><td>Cap. 1 + Cap. 2 + Login UI base (<code>Scaffold</code>, <code>TopAppBar</code>, <code>OutlinedTextField</code> for email and password)</td><td>Activity 1</td></tr>
+    <tr><td><strong>Class 2</strong></td><td>Login validations + <code>Switch</code> + <code>Snackbar</code> + <code>LoginViewModel</code></td><td>Activity 2</td></tr>
+    <tr><td><strong>Class 3</strong></td><td>Cap. 5 — <code>RegisterScreen</code> with <code>DatePickerDialog</code>, <code>ExposedDropdownMenuBox</code>, <code>BackHandler</code> + <code>AlertDialog</code>, <code>RegisterViewModel</code></td><td>Activity 3</td></tr>
+    <tr><td><strong>Class 4</strong></td><td>Cap. 6 — Navigation (<code>SoundInRoutes</code>, <code>SoundInNavGraph</code>, <code>NavController</code>, <code>popUpTo</code>) + <code>MainScreen</code></td><td>Activity 4</td></tr>
+  </table>
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Teaching Method</div>
+    <p>The instructor explains each concept and codes live. Students take notes and code simultaneously. When similar code patterns appear, the instructor assigns mini-challenges for students to complete independently.</p>
+  </div>
+</section>
+
+<hr>
+
+<!-- OUTCOMES -->
+<section class="section" id="outcomes">
+  <h2 class="section-title"><span class="cn">→</span>Learning Outcomes</h2>
+  <div class="section-subtitle">What students will demonstrate by the end of each class</div>
+
+  <h3 class="step-title" data-step="1">Class 1 — Fundamentals + Login UI base</h3>
+  <div class="outcome-card"><span class="outcome-number">1</span><span class="outcome-text">Apply Material Design 3 principles in Jetpack Compose by configuring a <code>MaterialTheme</code> with a custom <code>ColorScheme</code> to establish a consistent visual identity.</span></div>
+  <div class="outcome-card"><span class="outcome-number">2</span><span class="outcome-text">Structure Android screens using <code>Scaffold</code> and <code>TopAppBar</code> to follow modern layout conventions.</span></div>
+  <div class="outcome-card"><span class="outcome-number">3</span><span class="outcome-text">Build text input fields with <code>OutlinedTextField</code>, applying <code>KeyboardOptions</code> and <code>PasswordVisualTransformation</code> to handle different types of user input.</span></div>
+
+  <h3 class="step-title" data-step="2">Class 2 — Complete Login + ViewModel</h3>
+  <div class="outcome-card"><span class="outcome-number">1</span><span class="outcome-text">Implement form validation in Jetpack Compose using <code>isError</code> and <code>supportingText</code> to provide clear, real-time feedback to users.</span></div>
+  <div class="outcome-card"><span class="outcome-number">2</span><span class="outcome-text">Manage UI state reactively with <code>StateFlow</code> and consume it in composables using <code>collectAsStateWithLifecycle()</code>.</span></div>
+  <div class="outcome-card"><span class="outcome-number">3</span><span class="outcome-text">Apply the <code>ViewModel</code> pattern to separate UI concerns from business logic, following modern Android architecture guidelines.</span></div>
+
+  <h3 class="step-title" data-step="3">Class 3 — Register with Advanced Components</h3>
+  <div class="outcome-card"><span class="outcome-number">1</span><span class="outcome-text">Build advanced Material 3 forms by integrating <code>DatePickerDialog</code> and <code>ExposedDropdownMenuBox</code> to handle date and categorical input.</span></div>
+  <div class="outcome-card"><span class="outcome-number">2</span><span class="outcome-text">Protect user data from accidental loss by intercepting the system back gesture with <code>BackHandler</code> and confirming destructive actions through <code>AlertDialog</code>.</span></div>
+  <div class="outcome-card"><span class="outcome-number">3</span><span class="outcome-text">Reinforce the <code>ViewModel</code> + <code>StateFlow</code> pattern by replicating it across multiple screens, demonstrating consistent state management practices.</span></div>
+
+  <h3 class="step-title" data-step="4">Class 4 — Navigation + MainScreen</h3>
+  <div class="outcome-card"><span class="outcome-number">1</span><span class="outcome-text">Implement screen-to-screen navigation using the Navigation Compose library, managing the back stack appropriately for authentication flows.</span></div>
+  <div class="outcome-card"><span class="outcome-number">2</span><span class="outcome-text">Organize navigation routes as centralized constants to improve code maintainability and reduce typing errors across an application.</span></div>
+  <div class="outcome-card"><span class="outcome-number">3</span><span class="outcome-text">Control back stack behavior using <code>popUpTo</code> with <code>inclusive = true</code> to prevent unintended user flows after authentication.</span></div>
+</section>
+
+<hr>
+
+<!-- CAP 1 -->
+<section class="section" id="cap1">
+  <h2 class="section-title"><span class="cn">1</span>MaterialTheme Theory</h2>
+  <div class="section-subtitle">Understanding how Material Design 3 theming works in Compose</div>
+  <p>Material Design 3 (Material You) is Google's latest design system for Android. In Jetpack Compose, the entire visual identity of an app — colors, typography and shapes — is configured through <code>MaterialTheme</code>. Every composable nested inside <code>MaterialTheme</code> can access these design tokens.</p>
+
+  <h3 class="step-title" data-step="→">The three pillars of MaterialTheme</h3>
+  <table>
+    <tr><th>Pillar</th><th>What it controls</th><th>Accessed via</th></tr>
+    <tr><td><code>colorScheme</code></td><td>All colors in the app</td><td><code>MaterialTheme.colorScheme.*</code></td></tr>
+    <tr><td><code>typography</code></td><td>All text styles</td><td><code>MaterialTheme.typography.*</code></td></tr>
+    <tr><td><code>shapes</code></td><td>Corner radii of components</td><td><code>MaterialTheme.shapes.*</code></td></tr>
+  </table>
+
+  <h3 class="step-title" data-step="→">Color roles used in SoundIn</h3>
+  <table>
+    <tr><th>Role</th><th>Usage in SoundIn</th></tr>
+    <tr><td><code>primary</code></td><td>TopAppBar background, Button background</td></tr>
+    <tr><td><code>onPrimary</code></td><td>Text and icons placed on top of primary-colored surfaces</td></tr>
+    <tr><td><code>surface</code></td><td>Card and dialog backgrounds</td></tr>
+    <tr><td><code>onSurface</code></td><td>Primary text on white/surface backgrounds</td></tr>
+    <tr><td><code>onSurfaceVariant</code></td><td>Secondary/supporting text — less prominent than onSurface</td></tr>
+    <tr><td><code>error</code></td><td>Validation error messages and destructive action icons</td></tr>
+    <tr><td><code>background</code></td><td>Default screen background color</td></tr>
+  </table>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Naming Convention</div>
+    <p><code>on[Color]</code> is always readable against <code>[Color]</code>. For example, <code>onPrimary</code> is always legible on a <code>primary</code> background. Never use <code>onPrimary</code> on a white background — it will produce wrong contrast.</p>
+  </div>
+</section>
+
+<hr>
+
+<!-- CAP 2 -->
+<section class="section" id="cap2">
+  <h2 class="section-title"><span class="cn">2</span>Theme Setup</h2>
+  <div class="section-subtitle">Configuring the SoundIn ColorScheme in Theme.kt with dynamicColor disabled</div>
+  <p>In this chapter we configure the SoundIn theme. The key decision is setting <code>dynamicColor = false</code> so the app always shows SoundIn's brand purple regardless of the user's wallpaper on Android 12+.</p>
+
+  <h3 class="step-title" data-step="1">Configure <code>Color.kt</code></h3>
+  <p>Define the brand colors as Compose <code>Color</code> objects. These are referenced from <code>Theme.kt</code> when building the <code>LightColorScheme</code> and <code>DarkColorScheme</code>.</p>
+  <div class="location-hint">File location: <code>ui/theme/Color.kt</code> — this file already exists when you create a new Compose project. Replace its contents with the SoundIn brand colors.</div>
+  <div class="code-label">ui/theme/Color.kt</div>
+  <pre><code class="language-kotlin">package com.example.soundinp1.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+// SoundIn brand colors
+val SoundInPurple = Color(0xFF6B45C2)       // primary — TopAppBar, Buttons
+val SoundInPurpleDark = Color(0xFF4A2D99)   // primaryContainer
+val SoundInPink = Color(0xFFE91E63)         // accent for highlights</code></pre>
+
+  <div class="param-list">
+    <div class="param-list-title">Color values explained</div>
+    <div class="param-item"><span class="param-name">0xFF6B45C2</span><span class="param-desc">Hexadecimal color value. The <code>0xFF</code> prefix means full opacity (alpha = 255). <code>6B45C2</code> is the RGB hex for SoundIn purple.</span></div>
+    <div class="param-item"><span class="param-name">Color()</span><span class="param-desc">Compose color constructor that accepts an ARGB integer. Android colors are stored as 32-bit integers where the first byte is alpha and the remaining three are RGB.</span></div>
+  </div>
+
+  <h3 class="step-title" data-step="2">Configure <code>Theme.kt</code> — set <code>dynamicColor = false</code></h3>
+  <p>The critical change is setting <code>dynamicColor = false</code>. Without it, Android 12+ devices would override SoundIn's colors with colors derived from the user's wallpaper.</p>
+  <div class="location-hint">File location: <code>ui/theme/Theme.kt</code> — this file already exists. Find the <code>dynamicColor</code> parameter and change its default value from <code>true</code> to <code>false</code>.</div>
+  <div class="code-label">ui/theme/Theme.kt — key change</div>
+  <pre><code class="language-kotlin">@Composable
+fun SoundInTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean = false, // ← CHANGED from true to false — enforces SoundIn brand colors
+    content: @Composable () -> Unit
+) {
+    val colorScheme = when {
+        // Use dynamic color only if explicitly enabled AND on Android 12+
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        darkTheme -> DarkColorScheme   // Our custom dark palette
+        else -> LightColorScheme       // Our custom light palette (default)
+    }
+    MaterialTheme(
+        colorScheme = colorScheme, // Applies brand colors to all composables inside
+        typography = Typography,
+        content = content
+    )
+}</code></pre>
+
+  <div class="param-list">
+    <div class="param-list-title">Parameters explained</div>
+    <div class="param-item"><span class="param-name">dynamicColor = false</span><span class="param-desc">Disables Material You's wallpaper-based color extraction. Setting it to <code>false</code> ensures SoundIn's purple brand identity is always visible, regardless of the user's wallpaper choice.</span></div>
+    <div class="param-item"><span class="param-name">content</span><span class="param-desc">A composable lambda that receives all theme tokens. Every composable nested inside can call <code>MaterialTheme.colorScheme.*</code>, <code>MaterialTheme.typography.*</code>, etc.</span></div>
+  </div>
+
+  <div class="checkpoint">
+    <div class="checkpoint-title">✅ Checkpoint — Cap. 2</div>
+    <ul>
+      <li>Project compiles with no errors</li>
+      <li>The TopAppBar appears in SoundIn purple (#6B45C2) on all test devices</li>
+      <li>The color does not change when switching wallpapers on Android 12+ devices</li>
+    </ul>
+  </div>
+</section>
+
+<hr>
+
+<!-- CAP 3 -->
+<section class="section" id="cap3">
+  <h2 class="section-title"><span class="cn">3</span>Login UI</h2>
+  <div class="section-subtitle">Building the complete Login Screen with Scaffold, OutlinedTextField, Switch and Snackbar</div>
+  <p>In this chapter we build the complete Login Screen. The screen is split into two composables: <code>LoginScreen</code> manages the <code>Scaffold</code>, <code>SnackbarHostState</code> and <code>LoginViewModel</code> observations. <code>LoginContent</code> is purely visual — it receives all values as parameters, making it easy to Preview and test independently.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">🎯 UX Decisions in this chapter</div>
+    <ul>
+      <li><strong>Email keyboard</strong> — <code>KeyboardType.Email</code> automatically shows the @ key on mobile keyboards</li>
+      <li><strong>Password toggle</strong> — users can verify what they typed before submitting</li>
+      <li><strong>isError + supportingText</strong> — the user sees exactly which field is wrong and why</li>
+      <li><strong>Remember session Switch</strong> — the user controls whether the app saves their credentials</li>
+      <li><strong>Snackbar with Dismiss</strong> — the user decides when the feedback disappears</li>
+    </ul>
+  </div>
+
+  <h3 class="step-title" data-step="1">Create the file</h3>
+  <p>Create a new Kotlin file called <code>LoginScreen.kt</code> inside the <code>ui/screens</code> package. This file contains both <code>LoginContent</code> (written first) and <code>LoginScreen</code> (written below it), followed by the Preview at the bottom.</p>
+
+  <h3 class="step-title" data-step="2">Build <code>LoginContent</code></h3>
+  <p><code>LoginContent</code> is a stateless composable — it receives all values as parameters and has no state of its own except for the local password visibility toggle. This is the correct pattern in Compose: push state up, keep leaf composables dumb.</p>
+
+  <div class="location-hint">Place <code>LoginContent</code> at the top of <code>LoginScreen.kt</code>, immediately after the imports. It will be called by <code>LoginScreen</code> inside the Scaffold's content lambda.</div>
+  <div class="code-label">ui/screens/LoginScreen.kt — LoginContent (complete)</div>
+  <pre><code class="language-kotlin">@Composable
+fun LoginContent(
+    paddingValues: PaddingValues,         // Insets from Scaffold — prevents content hiding behind TopAppBar
+    email: String,                         // Current email value observed from ViewModel
+    onEmailChanged: (String) -> Unit,      // Called every time the user types in the email field
+    emailError: Boolean,                   // true = show red border and error message below the field
+    password: String,
+    onPasswordChanged: (String) -> Unit,
+    passwordError: Boolean,
+    rememberSession: Boolean,              // Current Switch state observed from ViewModel
+    onRememberSession: (Boolean) -> Unit,
+    onLoginClick: () -> Unit,              // Triggered when the "Log In" button is tapped
+    onNavigationToRegister: () -> Unit     // Triggered when the "Register" TextButton is tapped
+) {
+    // Column arranges all form elements vertically
+    // verticalScroll allows scrolling on small screens or when the keyboard is open
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(paddingValues)             // Apply Scaffold insets first
+            .verticalScroll(rememberScrollState())
+            .padding(24.dp),                    // Then add visual padding around the content
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp) // 16dp gap between all children automatically
+    ) {
+        Spacer(modifier = Modifier.height(32.dp)) // Extra top space for visual breathing room
+
+        // App logo — the "S" initial displayed in the primary brand color
+        Text(
+            text = "S",
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        // App name
+        Text(
+            text = "SoundIn",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // ── EMAIL FIELD ──
+        // KeyboardType.Email tells the OS to show the email keyboard (@ key visible)
+        // isError = emailError draws a red border when the email format is invalid
+        // supportingText shows the error message below the field — only visible when isError = true
+        OutlinedTextField(
+            value = email,
+            onValueChange = { onEmailChanged(it) },
+            label = { Text("Email Address") },
+            isError = emailError,
+            supportingText = {
+                if (emailError) Text("Enter a valid email address")
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email, // Shows @ key on the mobile keyboard
+                imeAction = ImeAction.Next          // "Next" button moves focus to the password field
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // ── PASSWORD FIELD ──
+        // passwordVisible is local state — it only controls the eye icon toggle
+        // It does not need to survive rotation, so remember{} without ViewModel is appropriate here
+        var passwordVisible by remember { mutableStateOf(false) }
+
+        OutlinedTextField(
+            value = password,
+            onValueChange = { onPasswordChanged(it) },
+            label = { Text("Password") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done // Last field — "Done" closes the keyboard
+            ),
+            isError = passwordError,
+            supportingText = {
+                if (passwordError) Text("Minimum 8 characters")
+            },
+            // PasswordVisualTransformation replaces characters with dots
+            // VisualTransformation.None shows the actual characters when toggle is active
+            visualTransformation = if (passwordVisible) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation()
+            },
+            trailingIcon = {
+                // Eye icon button — tapping it flips passwordVisible between true and false
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = if (passwordVisible) {
+                            Icons.Default.Visibility     // Eye open — password is visible
+                        } else {
+                            Icons.Default.VisibilityOff  // Eye closed — password is hidden
+                        },
+                        contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // ── REMEMBER SESSION SWITCH ──
+        // Row places the label on the left and the Switch on the right
+        // SpaceBetween pushes them to opposite ends of the available row width
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Remember session",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Switch(
+                checked = rememberSession,
+                onCheckedChange = { onRememberSession(it) }
+            )
+        }
+
+        // ── LOGIN BUTTON ──
+        // Primary action — full width following Material 3 button guidelines for prominent actions
+        Button(
+            onClick = { onLoginClick() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Log In")
+        }
+
+        // ── REGISTER LINK ──
+        // TextButton has no background or border — it looks like a text hyperlink
+        // Used for secondary actions that are less important than the primary button
+        TextButton(onClick = onNavigationToRegister) {
+            Text("Don't have an account? Register")
+        }
+
+    } // end of Column
+}</code></pre>
+
+  <div class="param-list">
+    <div class="param-list-title">Key concepts in LoginContent</div>
+    <div class="param-item"><span class="param-name">paddingValues</span><span class="param-desc">Received from the Scaffold's content lambda. Must be applied to the top-level composable so content is never hidden behind the TopAppBar or SnackbarHost.</span></div>
+    <div class="param-item"><span class="param-name">Arrangement.spacedBy(16.dp)</span><span class="param-desc">Adds 16dp of space between every child in the Column automatically — cleaner than adding Spacer composables between each field.</span></div>
+    <div class="param-item"><span class="param-name">var passwordVisible by remember</span><span class="param-desc">Local state for the visibility toggle. It does not need to survive rotation (a user would not expect the password to stay visible after rotating), so <code>remember</code> without ViewModel is appropriate.</span></div>
+    <div class="param-item"><span class="param-name">ImeAction.Next / Done</span><span class="param-desc">Controls the action button on the mobile keyboard. <code>Next</code> moves focus to the next field; <code>Done</code> closes the keyboard. These create a smooth form-filling experience on mobile.</span></div>
+  </div>
+
+  <h3 class="step-title" data-step="3">Build <code>LoginScreen</code></h3>
+  <p><code>LoginScreen</code> is the stateful composable. It creates the <code>Scaffold</code>, observes the <code>LoginViewModel</code> state flows, and handles the <code>Snackbar</code> logic inside a coroutine scope. Place it below <code>LoginContent</code> in the same file.</p>
+
+  <div class="location-hint">Place <code>LoginScreen</code> after the closing brace of <code>LoginContent</code>, in the same file <code>LoginScreen.kt</code>. It calls <code>LoginContent</code> inside the Scaffold's content lambda — the block that follows the Scaffold's closing parenthesis.</div>
+  <div class="code-label">ui/screens/LoginScreen.kt — LoginScreen (complete)</div>
+  <pre><code class="language-kotlin">@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LoginScreen(
+    viewModel: LoginViewModel = viewModel(),      // Injected by Compose — survives rotation
+    sessionViewModel: UserSessionViewModel,        // Manages the login session across the entire app
+    onNavigationToRegister: () -> Unit,           // LoginScreen does not know where Register is — callback
+    onLoginSuccess: () -> Unit                     // Called after successful login and Snackbar
+) {
+    // SnackbarHostState manages the queue and display of Snackbars
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    // rememberCoroutineScope provides a scope tied to this composable's lifecycle
+    // Required because showSnackbar() is a suspend function
+    val scope = rememberCoroutineScope()
+
+    // Observe each StateFlow from the ViewModel
+    // collectAsStateWithLifecycle() is lifecycle-aware — stops collecting when screen is not visible
+    val email by viewModel.email.collectAsStateWithLifecycle()
+    val password by viewModel.password.collectAsStateWithLifecycle()
+    val rememberSession by viewModel.rememberSession.collectAsStateWithLifecycle()
+    val emailError by viewModel.emailError.collectAsStateWithLifecycle()
+    val passwordError by viewModel.passwordError.collectAsStateWithLifecycle()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("SoundIn") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,      // Purple background
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary  // White text
+                )
+            )
+        },
+        snackbarHost = {
+            // SnackbarHost connects the SnackbarHostState to the Scaffold's Snackbar slot
+            // Snackbars launched via snackBarHostState.showSnackbar() appear at the bottom here
+            SnackbarHost(hostState = snackBarHostState)
+        }
+    ) { paddingValues -> // paddingValues = space occupied by TopAppBar + SnackbarHost
+        LoginContent(
+            paddingValues = paddingValues,
+            email = email,
+            onEmailChanged = viewModel::onEmailChanged,   // Method reference — cleaner than a lambda
+            emailError = emailError,
+            password = password,
+            onPasswordChanged = viewModel::onPasswordChanged,
+            passwordError = passwordError,
+            rememberSession = rememberSession,
+            onRememberSession = viewModel::onRememberSessionChanged,
+            onLoginClick = {
+                // validateAndLogin() validates fields, updates error states, returns Boolean
+                val isValid = viewModel.validateAndLogin()
+                scope.launch {
+                    if (isValid) {
+                        // Store the session before navigating — data is ready when ProfileScreen reads it
+                        sessionViewModel.login(
+                            name = "John Doe", // Dummy name — in production this comes from the server
+                            email = email      // Real email typed by the user
+                        )
+                        // showSnackbar() is suspend — the coroutine pauses here until the Snackbar finishes
+                        // onLoginSuccess() only runs AFTER the user reads the welcome message
+                        onLoginSuccess()
+                    } else {
+                        snackBarHostState.showSnackbar(
+                            message = "Please review the marked fields"
+                        )
+                    }
+                }
+            },
+            onNavigationToRegister = onNavigationToRegister
+        )
+    } // end of Scaffold
+}
+
+// ── PREVIEW ──
+// Uses LoginContent directly because LoginScreen requires a UserSessionViewModel
+// LoginContent has no ViewModel dependency — it accepts plain values as parameters
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    DelSoundTheme {
+        LoginContent(
+            paddingValues = PaddingValues(0.dp),
+            email = "",
+            onEmailChanged = {},
+            emailError = false,
+            password = "",
+            onPasswordChanged = { _: String -> },
+            passwordError = false,
+            rememberSession = false,
+            onRememberSession = { _: Boolean -> },
+            onLoginClick = {},
+            onNavigationToRegister = {}
+        )
+    }
+}</code></pre>
+
+  <div class="param-list">
+    <div class="param-list-title">Key concepts in LoginScreen</div>
+    <div class="param-item"><span class="param-name">rememberCoroutineScope()</span><span class="param-desc">Creates a coroutine scope tied to this composable. When the composable leaves the screen, the scope is automatically cancelled — preventing memory leaks from dangling coroutines.</span></div>
+    <div class="param-item"><span class="param-name">collectAsStateWithLifecycle()</span><span class="param-desc">Converts a <code>StateFlow</code> into a Compose <code>State</code>. The <code>WithLifecycle</code> variant stops collecting when the screen is in the background, saving battery and CPU compared to <code>collectAsState()</code>.</span></div>
+    <div class="param-item"><span class="param-name">viewModel::onEmailChanged</span><span class="param-desc">Kotlin method reference — equivalent to <code>{ value -> viewModel.onEmailChanged(value) }</code> but shorter. Works because <code>onEmailChanged</code> takes exactly one <code>String</code> parameter.</span></div>
+    <div class="param-item"><span class="param-name">scope.launch { }</span><span class="param-desc">Launches a coroutine. Required because <code>showSnackbar()</code> is a <code>suspend</code> function — it can only be called from inside a coroutine.</span></div>
+    <div class="param-item"><span class="param-name">sessionViewModel.login()</span><span class="param-desc">Stores session data before calling <code>onLoginSuccess()</code>. This ensures the data is ready before any screen that depends on the session (like ProfileScreen) tries to read it.</span></div>
+  </div>
+
+  <div class="checkpoint">
+    <div class="checkpoint-title">✅ Checkpoint — Cap. 3</div>
+    <ul>
+      <li>Login Screen renders with TopAppBar, email field, password field, Switch and both buttons</li>
+      <li>The email field shows the email keyboard with the @ key visible</li>
+      <li>The password field shows dots by default and reveals characters when the eye icon is tapped</li>
+      <li>Tapping "Log In" with empty fields shows red borders and error messages on both fields</li>
+      <li>Tapping "Log In" with a valid email and 8+ character password shows the welcome Snackbar</li>
+      <li>The Switch toggles between on and off without errors</li>
+    </ul>
+  </div>
+</section>
+
+<hr>
+
+<!-- CAP 4 -->
+<section class="section" id="cap4">
+  <h2 class="section-title"><span class="cn">4</span>LoginViewModel</h2>
+  <div class="section-subtitle">Separating UI state from business logic using StateFlow and ViewModel</div>
+  <p>In this chapter we create <code>LoginViewModel</code> and move all state and validation logic out of the composable. The ViewModel survives device rotation because it is scoped to the Activity lifecycle — not to the composable. After this chapter the Login Screen will preserve its data when the user rotates the device.</p>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ The core pattern: MutableStateFlow → StateFlow</div>
+    <p>Every piece of state follows the same two-variable pattern:<br>
+    <code>private val _field = MutableStateFlow(defaultValue)</code> — private, writable, only the ViewModel can change it.<br>
+    <code>val field: StateFlow = _field.asStateFlow()</code> — public, read-only, the UI observes this.</p>
+  </div>
+
+  <h3 class="step-title" data-step="1">Create <code>LoginViewModel.kt</code></h3>
+  <p>Create a new Kotlin file called <code>LoginViewModel.kt</code> directly inside the <code>ui</code> package. ViewModels are not screen files — they live at the same level as the <code>screens</code> folder, not inside it.</p>
+
+  <div class="location-hint">File location: <code>ui/LoginViewModel.kt</code> — create this file at the same level as the <code>screens</code> folder, NOT inside it. ViewModels belong in the <code>ui</code> package alongside the ViewModel for Register.</div>
+  <div class="code-label">ui/LoginViewModel.kt (complete)</div>
+  <pre><code class="language-kotlin">class LoginViewModel : ViewModel() {
+
+    // ── PRIVATE STATE ──
+    // MutableStateFlow holds the current value and notifies all observers when it changes
+    // The underscore prefix (_) signals that this variable is private and mutable
+    private val _email = MutableStateFlow("")
+    private val _password = MutableStateFlow("")
+    private val _rememberSession = MutableStateFlow(false)
+    private val _emailError = MutableStateFlow(false)    // false = no error shown to the user
+    private val _passwordError = MutableStateFlow(false)
+
+    // ── PUBLIC STATE ──
+    // asStateFlow() wraps _email in a read-only StateFlow
+    // The UI can observe these but cannot call .value = on them directly
+    val email: StateFlow&lt;String&gt; = _email.asStateFlow()
+    val password: StateFlow&lt;String&gt; = _password.asStateFlow()
+    val rememberSession: StateFlow&lt;Boolean&gt; = _rememberSession.asStateFlow()
+    val emailError: StateFlow&lt;Boolean&gt; = _emailError.asStateFlow()
+    val passwordError: StateFlow&lt;Boolean&gt; = _passwordError.asStateFlow()
+
+    // ── UPDATE FUNCTIONS ──
+    // Called by the UI when the user types — the ViewModel updates the state
+    // Clearing the error immediately when the user types again is good UX:
+    // the red border disappears as soon as the user starts correcting the input
+    fun onEmailChanged(value: String) {
+        _email.value = value
+        _emailError.value = false // Clear error as soon as user starts correcting
+    }
+
+    fun onPasswordChanged(value: String) {
+        _password.value = value
+        _passwordError.value = false
+    }
+
+    fun onRememberSessionChanged(value: Boolean) {
+        _rememberSession.value = value
+    }
+
+    // ── VALIDATION ──
+    // Called when the user taps "Log In"
+    // Updates both error flags and returns true only if BOTH fields are valid
+    fun validateAndLogin(): Boolean {
+        val isEmailValid = _email.value.contains("@") && _email.value.contains(".")
+        val isPasswordValid = _password.value.length >= 8
+
+        // true = error (field is invalid), false = no error (field is valid)
+        _emailError.value = !isEmailValid
+        _passwordError.value = !isPasswordValid
+
+        return isEmailValid && isPasswordValid
+    }
+}</code></pre>
+
+  <div class="param-list">
+    <div class="param-list-title">Key concepts in LoginViewModel</div>
+    <div class="param-item"><span class="param-name">: ViewModel()</span><span class="param-desc">Inheriting from <code>ViewModel</code> makes the class lifecycle-aware. Android keeps the ViewModel alive during configuration changes (rotation, theme changes) and only destroys it when the Activity is truly finished.</span></div>
+    <div class="param-item"><span class="param-name">MutableStateFlow("")</span><span class="param-desc">Creates a hot stream that always has a value. The string <code>""</code> is the initial value — what the field contains before the user types anything.</span></div>
+    <div class="param-item"><span class="param-name">asStateFlow()</span><span class="param-desc">Wraps the <code>MutableStateFlow</code> in a read-only <code>StateFlow</code>. The UI can observe it but cannot modify it directly. This enforces unidirectional data flow.</span></div>
+    <div class="param-item"><span class="param-name">_emailError.value = false</span><span class="param-desc">Clears the error as soon as the user starts typing again. The red border disappears while the user corrects the input, providing immediate positive feedback.</span></div>
+  </div>
+
+  <div class="checkpoint">
+    <div class="checkpoint-title">✅ Checkpoint — Cap. 4</div>
+    <ul>
+      <li>Enter an email and a password in the Login Screen</li>
+      <li>Rotate the device (Ctrl+F11 in the Android emulator, or Ctrl+Cmd+Right Arrow on Mac)</li>
+      <li>The fields still contain the data entered before rotating — the ViewModel preserved the state</li>
+      <li>Without the ViewModel, both fields would reset to empty strings on every rotation</li>
+    </ul>
+  </div>
+</section>
+
+<hr>
+
+<!-- CAP 5 -->
+<section class="section" id="cap5">
+  <h2 class="section-title"><span class="cn">5</span>Register Screen</h2>
+  <div class="section-subtitle">Advanced Material 3 — DatePickerDialog, ExposedDropdownMenuBox, BackHandler + AlertDialog</div>
+  <p>This is the most complex chapter of the course. The Register Screen introduces three advanced Material 3 components plus a complete <code>RegisterViewModel</code> with seven fields and comprehensive validation.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">🎯 UX Decisions in this chapter</div>
+    <ul>
+      <li><strong>DatePickerDialog</strong> — visual calendar is faster and less error-prone than typing a date. Users cannot accidentally enter invalid dates like February 31st.</li>
+      <li><strong>ExposedDropdownMenuBox</strong> — a predefined genre list eliminates spelling errors and ensures consistent data in the backend.</li>
+      <li><strong>BackHandler + AlertDialog</strong> — if a user fills in 5 of 7 fields and accidentally presses back, they lose everything. The confirmation dialog prevents this — exactly like Gmail and WhatsApp.</li>
+      <li><strong>Confirm password field</strong> — forces the user to type the password twice, catching typos before account creation.</li>
+      <li><strong>Accepted terms Switch</strong> — required for GDPR and app store compliance.</li>
+    </ul>
+  </div>
+
+  <h3 class="step-title" data-step="1">Create <code>RegisterViewModel.kt</code></h3>
+  <p>Create <code>RegisterViewModel.kt</code> in the <code>ui</code> package alongside <code>LoginViewModel.kt</code>. This ViewModel has 14 state variables — one value and one error flag for each of the 7 form fields.</p>
+
+  <div class="location-hint">File location: <code>ui/RegisterViewModel.kt</code> — same folder as <code>LoginViewModel.kt</code>, inside the <code>ui</code> package but NOT inside the <code>screens</code> folder.</div>
+  <div class="code-label">ui/RegisterViewModel.kt (complete)</div>
+  <pre><code class="language-kotlin">class RegisterViewModel : ViewModel() {
+
+    // ── PRIVATE STATE ──
+    // Each form field has TWO MutableStateFlow variables:
+    // 1. The field value (what the user typed or selected)
+    // 2. The field error (whether to show the red border and error message)
+    private val _name = MutableStateFlow("")
+    private val _nameError = MutableStateFlow(false)
+    private val _email = MutableStateFlow("")
+    private val _emailError = MutableStateFlow(false)
+    private val _password = MutableStateFlow("")
+    private val _passwordError = MutableStateFlow(false)
+    private val _passwordConfirm = MutableStateFlow("")
+    private val _passwordConfirmError = MutableStateFlow(false)
+    private val _birthDate = MutableStateFlow("") // Set by DatePickerDialog
+    private val _birthDateError = MutableStateFlow(false)
+    private val _genre = MutableStateFlow("") // Set by ExposedDropdownMenuBox
+    private val _genreError = MutableStateFlow(false)
+    private val _acceptedTerms = MutableStateFlow(false) // Set by Switch
+    private val _acceptedTermsError = MutableStateFlow(false)
+
+    // ── PUBLIC STATE ──
+    // All 14 StateFlow variables exposed to the UI
+    val name: StateFlow&lt;String&gt; = _name.asStateFlow()
+    val nameError: StateFlow&lt;Boolean&gt; = _nameError.asStateFlow()
+    val email: StateFlow&lt;String&gt; = _email.asStateFlow()
+    val emailError: StateFlow&lt;Boolean&gt; = _emailError.asStateFlow()
+    val password: StateFlow&lt;String&gt; = _password.asStateFlow()
+    val passwordError: StateFlow&lt;Boolean&gt; = _passwordError.asStateFlow()
+    val passwordConfirm: StateFlow&lt;String&gt; = _passwordConfirm.asStateFlow()
+    val passwordConfirmError: StateFlow&lt;Boolean&gt; = _passwordConfirmError.asStateFlow()
+    val birthDate: StateFlow&lt;String&gt; = _birthDate.asStateFlow()
+    val birthDateError: StateFlow&lt;Boolean&gt; = _birthDateError.asStateFlow()
+    val genre: StateFlow&lt;String&gt; = _genre.asStateFlow()
+    val genreError: StateFlow&lt;Boolean&gt; = _genreError.asStateFlow()
+    val acceptedTerms: StateFlow&lt;Boolean&gt; = _acceptedTerms.asStateFlow()
+    val acceptedTermsError: StateFlow&lt;Boolean&gt; = _acceptedTermsError.asStateFlow()
+
+    // ── UPDATE FUNCTIONS ──
+    // Text fields clear their error when the user starts typing — same pattern as LoginViewModel
+    fun onNameChanged(newName: String) { _name.value = newName; _nameError.value = false }
+    fun onEmailChanged(newEmail: String) { _email.value = newEmail; _emailError.value = false }
+    fun onPasswordChanged(newPassword: String) { _password.value = newPassword; _passwordError.value = false }
+    fun onPasswordConfirmChanged(newConfirm: String) { _passwordConfirm.value = newConfirm; _passwordConfirmError.value = false }
+    fun onBirthDateChanged(newDate: String) { _birthDate.value = newDate } // DatePicker always returns a valid date — no error to clear
+    fun onGenreChanged(newGenre: String) { _genre.value = newGenre; _genreError.value = false }
+    fun onAcceptedTermsChanged(newValue: Boolean) { _acceptedTerms.value = newValue }
+
+    // ── VALIDATION ──
+    // Called when "Create Account" is tapped
+    // Validates all 7 fields simultaneously and returns true only if ALL are valid
+    fun validateAndRegister(): Boolean {
+        _nameError.value = _name.value.isBlank()
+        _emailError.value = _email.value.isBlank() || !_email.value.contains("@") || !_email.value.contains(".")
+        _passwordError.value = _password.value.isBlank() || _password.value.length &lt; 8
+        // Confirm password must match the password field exactly
+        _passwordConfirmError.value = _passwordConfirm.value.isBlank() || _passwordConfirm.value != _password.value
+        _birthDateError.value = _birthDate.value.isBlank()
+        _genreError.value = _genre.value.isBlank()
+        _acceptedTermsError.value = !_acceptedTerms.value
+
+        // All error flags must be false AND terms must be accepted
+        return (!_nameError.value && !_emailError.value && !_passwordError.value
+                && !_passwordConfirmError.value && !_birthDateError.value
+                && !_genreError.value) && acceptedTerms.value
+    }
+}</code></pre>
+
+  <h3 class="step-title" data-step="2">Create <code>RegisterScreen.kt</code></h3>
+  <p>Create a new file called <code>RegisterScreen.kt</code> inside <code>ui/screens</code>. Like <code>LoginScreen.kt</code>, this file contains: <code>RegisterContent</code> (purely visual) first, then <code>RegisterScreen</code> (manages Scaffold and ViewModel), then the Previews at the bottom.</p>
+
+  <div class="location-hint">File location: <code>ui/screens/RegisterScreen.kt</code> — same folder as <code>LoginScreen.kt</code>. The file structure mirrors LoginScreen.kt exactly.</div>
+
+  <h3 class="step-title" data-step="3">Build <code>RegisterContent</code> — signature and BackHandler</h3>
+  <p>The <code>RegisterContent</code> function signature has 24 parameters — one for every value, error, and callback. After the signature, the very first things inside the function body (before the Column) are the <code>BackHandler</code> and <code>AlertDialog</code>. These must be in the composition tree before the Column so they intercept back gestures at the screen level.</p>
+
+  <div class="location-hint">Add <code>RegisterContent</code> at the top of <code>RegisterScreen.kt</code> after the imports. The <code>BackHandler</code> and <code>AlertDialog</code> go immediately after the function's opening brace, before the <code>Column</code>.</div>
+  <div class="code-label">ui/screens/RegisterScreen.kt — RegisterContent signature + BackHandler + AlertDialog</div>
+  <pre><code class="language-kotlin">@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RegisterContent(
+    paddingValues: PaddingValues,              // Insets from Scaffold
+    name: String,
+    onNameChanged: (String) -> Unit,
+    nameError: Boolean,
+    email: String,
+    onEmailChanged: (String) -> Unit,
+    emailError: Boolean,
+    password: String,
+    onPasswordChanged: (String) -> Unit,
+    passwordError: Boolean,
+    passwordConfirm: String,
+    onPasswordConfirmChanged: (String) -> Unit,
+    passwordConfirmError: Boolean,
+    birthDate: String,                         // Formatted date string from DatePickerDialog
+    onBirthDateChanged: (String) -> Unit,
+    birthDateError: Boolean,
+    genre: String,                             // Selected genre from ExposedDropdownMenuBox
+    onGenreChanged: (String) -> Unit,
+    genreError: Boolean,
+    acceptedTerms: Boolean,
+    acceptedTermsError: Boolean,
+    onAcceptedTermsChanged: (Boolean) -> Unit,
+    showBackDialog: Boolean,                   // Controls whether AlertDialog is visible
+    onShowBackDialogChanged: (Boolean) -> Unit,
+    onConfirmBack: () -> Unit,                 // Called when user confirms "Go Back" in the AlertDialog
+    onCreateAccount: () -> Unit                // Called when "Create Account" button is tapped
+) {
+
+    // ── BACK HANDLER ──
+    // Placed BEFORE the Column so it intercepts back gestures at the screen level
+    // enabled = true only when at least one field has data — empty forms navigate back normally
+    BackHandler(enabled = name.isNotBlank() || email.isNotBlank() || password.isNotBlank()) {
+        onShowBackDialogChanged(true) // Show the confirmation dialog instead of navigating back
+    }
+
+    // ── ALERT DIALOG ──
+    // Rendered when showBackDialog = true — shown on top of everything else
+    // Asks the user to confirm before discarding their form data
+    if (showBackDialog) {
+        AlertDialog(
+            onDismissRequest = { onShowBackDialogChanged(false) }, // Tapping outside closes without navigating
+            title = { Text("Unsaved Data") },
+            text = { Text("You have unsaved data. Are you sure you want to go back?") },
+            confirmButton = {
+                // "Go Back" — the destructive action — uses error color to visually signal danger
+                TextButton(
+                    onClick = {
+                        onShowBackDialogChanged(false) // Close the dialog first
+                        onConfirmBack()                // Then navigate back
+                    }
+                ) {
+                    Text("Go Back", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                // "Stay" — the safe action — returns the user to the form without losing data
+                TextButton(onClick = { onShowBackDialogChanged(false) }) {
+                    Text("Stay")
+                }
+            }
+        )
+    }
+
+    // ── COLUMN ── (form fields begin here — see next steps)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .padding(paddingValues)
+            .verticalScroll(rememberScrollState())
+    ) {
+        // Form fields are added inside this Column in the following steps
+    }
+}</code></pre>
+
+  <div class="param-list">
+    <div class="param-list-title">BackHandler + AlertDialog explained</div>
+    <div class="param-item"><span class="param-name">BackHandler(enabled = ...)</span><span class="param-desc">When <code>enabled = true</code>, this composable overrides the system back button/gesture. The lambda runs instead of the default back navigation. When <code>enabled = false</code>, it is inactive and the system back works normally.</span></div>
+    <div class="param-item"><span class="param-name">name.isNotBlank() || email.isNotBlank() || password.isNotBlank()</span><span class="param-desc">The BackHandler only activates when at least one of these fields has content. If the form is empty, pressing back navigates away immediately without showing the dialog.</span></div>
+    <div class="param-item"><span class="param-name">onDismissRequest</span><span class="param-desc">Called when the user taps outside the dialog or presses back while the dialog is showing. Here it closes the dialog without navigating back.</span></div>
+    <div class="param-item"><span class="param-name">confirmButton vs dismissButton</span><span class="param-desc">In Material 3 naming: <code>confirmButton</code> is the action button on the right, and <code>dismissButton</code> is on the left. "Go Back" is the confirmButton (rendered in error red) and "Stay" is the dismissButton.</span></div>
+  </div>
+
+  <h3 class="step-title" data-step="4">Name, Email, Password fields inside the Column</h3>
+  <p>Replace the comment inside the Column with the four text fields. The first three follow the same pattern as <code>LoginContent</code> — the only difference is that Password uses <code>ImeAction.Next</code> instead of <code>Done</code> because it is not the last field.</p>
+
+  <div class="location-hint">Add these fields inside the <code>Column</code>, replacing the placeholder comment from the previous step. They go in this order: Name, Email, Password, Confirm Password.</div>
+  <div class="code-label">ui/screens/RegisterScreen.kt — Name, Email, Password fields (inside Column)</div>
+  <pre><code class="language-kotlin">        // ── NAME FIELD ──
+        OutlinedTextField(
+            value = name,
+            onValueChange = { onNameChanged(it) },
+            label = { Text("Full Name") },
+            isError = nameError,
+            supportingText = { if (nameError) Text("Name cannot be empty") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next // Moves focus to the email field
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // ── EMAIL FIELD ──
+        OutlinedTextField(
+            value = email,
+            onValueChange = { onEmailChanged(it) },
+            label = { Text("Email Address") },
+            isError = emailError,
+            supportingText = { if (emailError) Text("Enter a valid email address") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // ── PASSWORD FIELD ──
+        // Local state — controls the eye icon toggle for this specific field
+        var passwordVisible by remember { mutableStateOf(false) }
+        OutlinedTextField(
+            value = password,
+            onValueChange = { onPasswordChanged(it) },
+            label = { Text("Password") },
+            isError = passwordError,
+            supportingText = { if (passwordError) Text("Minimum 8 characters") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next // Not the last field — moves to Confirm Password
+            ),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // ── CONFIRM PASSWORD FIELD ──
+        // Separate visibility toggle — independent from the password field toggle
+        var passwordConfirmVisible by remember { mutableStateOf(false) }
+        OutlinedTextField(
+            value = passwordConfirm,
+            onValueChange = { onPasswordConfirmChanged(it) },
+            label = { Text("Confirm Password") },
+            isError = passwordConfirmError,
+            supportingText = { if (passwordConfirmError) Text("Passwords do not match") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next
+            ),
+            visualTransformation = if (passwordConfirmVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { passwordConfirmVisible = !passwordConfirmVisible }) {
+                    Icon(
+                        imageVector = if (passwordConfirmVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = if (passwordConfirmVisible) "Hide password" else "Show password"
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )</code></pre>
+
+  <h3 class="step-title" data-step="5">DatePickerDialog</h3>
+  <p>The birth date field is a read-only <code>OutlinedTextField</code> — the user cannot type in it. Tapping the calendar icon opens the <code>DatePickerDialog</code>. <code>showDatePicker</code> and <code>datePickerState</code> are local state because they only control the dialog within this composable.</p>
+
+  <div class="location-hint">Add the birth date field and DatePickerDialog inside the Column, after the Confirm Password field — still inside the same Column from Step 4.</div>
+  <div class="code-label">ui/screens/RegisterScreen.kt — Birth Date field + DatePickerDialog (inside Column)</div>
+  <pre><code class="language-kotlin">        // ── BIRTH DATE FIELD ──
+        // showDatePicker controls whether the DatePickerDialog is visible
+        var showDatePicker by remember { mutableStateOf(false) }
+        // datePickerState stores the currently selected date in milliseconds
+        val datePickerState = rememberDatePickerState()
+
+        // This field is readOnly — the user selects a date from the dialog, not types it
+        // Tapping the calendar icon sets showDatePicker = true which opens the dialog below
+        OutlinedTextField(
+            value = birthDate,       // Displays the formatted date string after selection
+            onValueChange = {},      // Empty — the field is read-only
+            label = { Text("Birth Date") },
+            readOnly = true,         // Prevents keyboard from appearing when the field is tapped
+            isError = birthDateError,
+            supportingText = { if (birthDateError) Text("Please select a birth date") },
+            trailingIcon = {
+                IconButton(onClick = { showDatePicker = true }) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Select birth date"
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // DatePickerDialog is only rendered in the composition when showDatePicker = true
+        if (showDatePicker) {
+            DatePickerDialog(
+                onDismissRequest = { showDatePicker = false },
+                confirmButton = {
+                    TextButton(onClick = {
+                        // selectedDateMillis is null if the user has not picked a date
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            // Convert milliseconds to a formatted date string "MM/dd/yyyy"
+                            val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).apply {
+                                // UTC prevents timezone-related off-by-one day errors
+                                timeZone = java.util.TimeZone.getTimeZone("UTC")
+                            }
+                            onBirthDateChanged(formatter.format(Date(millis)))
+                        }
+                        showDatePicker = false // Close the dialog after confirming
+                    }) {
+                        Text("Accept")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDatePicker = false }) { Text("Cancel") }
+                }
+            ) {
+                DatePicker(state = datePickerState) // The visual calendar inside the dialog
+            }
+        }</code></pre>
+
+  <div class="param-list">
+    <div class="param-list-title">DatePickerDialog explained</div>
+    <div class="param-item"><span class="param-name">rememberDatePickerState()</span><span class="param-desc">Creates and remembers the state object used internally by <code>DatePicker</code>. It stores the currently highlighted and selected date in milliseconds since the Unix epoch (January 1, 1970).</span></div>
+    <div class="param-item"><span class="param-name">selectedDateMillis</span><span class="param-desc">The number of milliseconds since January 1, 1970 for the selected date. It is <code>null</code> when no date has been selected yet. The <code>?.let { }</code> block only runs when a date is actually selected.</span></div>
+    <div class="param-item"><span class="param-name">SimpleDateFormat("MM/dd/yyyy")</span><span class="param-desc">Converts the milliseconds integer into a readable string like "05/14/1995". MM = month with leading zero, dd = day with leading zero, yyyy = 4-digit year.</span></div>
+    <div class="param-item"><span class="param-name">TimeZone.getTimeZone("UTC")</span><span class="param-desc">Without UTC, the formatter uses the device's local timezone which can cause the displayed date to be one day off in timezones west of UTC. Using UTC ensures consistency across all time zones.</span></div>
+  </div>
+
+  <h3 class="step-title" data-step="6">ExposedDropdownMenuBox</h3>
+  <p>The genre selector uses <code>ExposedDropdownMenuBox</code> — a Material 3 component that combines a read-only <code>OutlinedTextField</code> with a dropdown list. The <code>expanded</code> variable controls whether the list is open or closed.</p>
+
+  <div class="location-hint">Add the genre dropdown inside the Column, after the DatePickerDialog block — still inside the same Column.</div>
+  <div class="code-label">ui/screens/RegisterScreen.kt — Genre ExposedDropdownMenuBox (inside Column)</div>
+  <pre><code class="language-kotlin">        // ── GENRE DROPDOWN ──
+        val genres = listOf("Pop", "Rock", "Hip Hop", "Electronic", "Reggaeton", "Jazz")
+        var expanded by remember { mutableStateOf(false) } // Controls dropdown open/closed state
+
+        // ExposedDropdownMenuBox wraps the TextField and dropdown menu together
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded } // Toggle open/closed when tapped
+        ) {
+            OutlinedTextField(
+                value = genre,      // Shows the selected genre, or empty if nothing selected yet
+                onValueChange = {}, // Read-only — selection happens in the dropdown, not by typing
+                readOnly = true,
+                isError = genreError,
+                supportingText = { if (genreError) Text("Please select a genre") },
+                label = { Text("Favorite Music Genre") },
+                trailingIcon = {
+                    // Chevron arrow that rotates 180° when the dropdown is open
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    // menuAnchor connects this TextField to the dropdown menu
+                    // PrimaryNotEditable = the anchor is read-only (user selects, not types)
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
+            )
+
+            // ExposedDropdownMenu appears below the TextField when expanded = true
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false } // Close when tapping outside
+            ) {
+                genres.forEach { item ->
+                    DropdownMenuItem(
+                        text = { Text(item) },
+                        onClick = {
+                            onGenreChanged(item) // Update ViewModel with the selected genre
+                            expanded = false      // Close the dropdown after selection
+                        }
+                    )
+                }
+            }
+        }</code></pre>
+
+  <div class="param-list">
+    <div class="param-list-title">ExposedDropdownMenuBox explained</div>
+    <div class="param-item"><span class="param-name">ExposedDropdownMenuBox</span><span class="param-desc">A Material 3 wrapper that coordinates the TextField and the dropdown menu. It manages the anchor position so the dropdown appears directly below the field on all screen sizes.</span></div>
+    <div class="param-item"><span class="param-name">onExpandedChange = { expanded = !expanded }</span><span class="param-desc">Toggles the dropdown. Called when the user taps the TextField or the trailing arrow icon. The <code>!</code> operator inverts the boolean — if open, close; if closed, open.</span></div>
+    <div class="param-item"><span class="param-name">menuAnchor(MenuAnchorType.PrimaryNotEditable, true)</span><span class="param-desc">Required modifier that tells the dropdown where to anchor itself. <code>PrimaryNotEditable</code> indicates the field is read-only. Without this modifier the dropdown would not position correctly.</span></div>
+    <div class="param-item"><span class="param-name">ExposedDropdownMenuDefaults.TrailingIcon(expanded)</span><span class="param-desc">Renders a chevron arrow that rotates 180° when <code>expanded = true</code>, providing clear visual feedback about the dropdown state.</span></div>
+  </div>
+
+  <h3 class="step-title" data-step="7">Terms Switch and Create Account Button</h3>
+  <p>The final elements inside the Column are the accepted terms Switch and the Create Account button. These go after the ExposedDropdownMenuBox closing brace, still inside the same Column.</p>
+
+  <div class="location-hint">Add the Switch Row and Button at the bottom of the Column, after the ExposedDropdownMenuBox. These are the last elements before the Column's closing brace.</div>
+  <div class="code-label">ui/screens/RegisterScreen.kt — Terms Switch + Create Account Button (last items inside Column)</div>
+  <pre><code class="language-kotlin">        // ── ACCEPTED TERMS SWITCH ──
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("I accept the terms and conditions")
+            Switch(
+                checked = acceptedTerms,
+                onCheckedChange = { onAcceptedTermsChanged(it) }
+            )
+        }
+
+        // ── CREATE ACCOUNT BUTTON ──
+        Button(
+            onClick = { onCreateAccount() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Create Account")
+        }
+
+    } // end of Column
+} // end of RegisterContent</code></pre>
+
+  <h3 class="step-title" data-step="8">Build <code>RegisterScreen</code></h3>
+  <p><code>RegisterScreen</code> manages the <code>Scaffold</code>, observes all 14 ViewModel state flows, and handles the Snackbar logic. The TopAppBar has a custom back button that mirrors the <code>BackHandler</code> behavior. Place it below <code>RegisterContent</code> in the same file.</p>
+
+  <div class="location-hint">Place <code>RegisterScreen</code> after the closing brace of <code>RegisterContent</code>, in the same file. It calls <code>RegisterContent</code> inside the Scaffold's content lambda.</div>
+  <div class="code-label">ui/screens/RegisterScreen.kt — RegisterScreen (complete)</div>
+  <pre><code class="language-kotlin">@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RegisterScreen(
+    viewModel: RegisterViewModel = viewModel(),
+    onNavigateToLogin: () -> Unit // Called when going back or after successful registration
+) {
+    // Observe all 14 StateFlow variables
+    val name by viewModel.name.collectAsStateWithLifecycle()
+    val nameError by viewModel.nameError.collectAsStateWithLifecycle()
+    val email by viewModel.email.collectAsStateWithLifecycle()
+    val emailError by viewModel.emailError.collectAsStateWithLifecycle()
+    val password by viewModel.password.collectAsStateWithLifecycle()
+    val passwordError by viewModel.passwordError.collectAsStateWithLifecycle()
+    val passwordConfirm by viewModel.passwordConfirm.collectAsStateWithLifecycle()
+    val passwordConfirmError by viewModel.passwordConfirmError.collectAsStateWithLifecycle()
+    val birthDate by viewModel.birthDate.collectAsStateWithLifecycle()
+    val birthDateError by viewModel.birthDateError.collectAsStateWithLifecycle()
+    val genre by viewModel.genre.collectAsStateWithLifecycle()
+    val genreError by viewModel.genreError.collectAsStateWithLifecycle()
+    val acceptedTerms by viewModel.acceptedTerms.collectAsStateWithLifecycle()
+    val acceptedTermsError by viewModel.acceptedTermsError.collectAsStateWithLifecycle()
+
+    // showBackDialog is local state — only controls the AlertDialog visibility in this screen
+    var showBackDialog by remember { mutableStateOf(false) }
+    val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Create Account") },
+                navigationIcon = {
+                    // The TopAppBar back button mirrors the BackHandler behavior
+                    // Both show the AlertDialog when the form has data
+                    IconButton(onClick = {
+                        if (name.isNotBlank() || email.isNotBlank() || password.isNotBlank()) {
+                            showBackDialog = true   // Show confirmation dialog
+                        } else {
+                            onNavigateToLogin()     // Navigate back directly if form is empty
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack, // Non-deprecated arrow icon
+                            contentDescription = "Go back",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
+    ) { paddingValues ->
+        RegisterContent(
+            paddingValues = paddingValues,
+            name = name,
+            onNameChanged = viewModel::onNameChanged,
+            nameError = nameError,
+            email = email,
+            onEmailChanged = viewModel::onEmailChanged,
+            emailError = emailError,
+            password = password,
+            onPasswordChanged = viewModel::onPasswordChanged,
+            passwordError = passwordError,
+            passwordConfirm = passwordConfirm,
+            onPasswordConfirmChanged = viewModel::onPasswordConfirmChanged,
+            passwordConfirmError = passwordConfirmError,
+            birthDate = birthDate,
+            onBirthDateChanged = viewModel::onBirthDateChanged,
+            birthDateError = birthDateError,
+            genre = genre,
+            onGenreChanged = viewModel::onGenreChanged,
+            genreError = genreError,
+            acceptedTerms = acceptedTerms,
+            onAcceptedTermsChanged = viewModel::onAcceptedTermsChanged,
+            acceptedTermsError = acceptedTermsError,
+            showBackDialog = showBackDialog,
+            onShowBackDialogChanged = { showBackDialog = it },
+            onConfirmBack = { onNavigateToLogin() },
+            onCreateAccount = {
+                val isValid = viewModel.validateAndRegister()
+                scope.launch {
+                    if (isValid) {
+                        snackBarHostState.showSnackbar("Account created successfully")
+                        onNavigateToLogin()
+                    } else {
+                        snackBarHostState.showSnackbar("Please review the marked fields")
+                    }
+                }
+            }
+        )
+    } // end of Scaffold
+}
+
+// ── PREVIEWS ──
+@Preview(showBackground = true)
+@Composable
+fun RegisterContentPreview() {
+    DelSoundTheme {
+        RegisterContent(
+            paddingValues = PaddingValues(0.dp),
+            name = "", onNameChanged = {}, nameError = false,
+            email = "", onEmailChanged = {}, emailError = false,
+            password = "", onPasswordChanged = {}, passwordError = false,
+            passwordConfirm = "", onPasswordConfirmChanged = {}, passwordConfirmError = false,
+            birthDate = "", onBirthDateChanged = {}, birthDateError = false,
+            genre = "", onGenreChanged = {}, genreError = false,
+            acceptedTerms = false, onAcceptedTermsChanged = {}, acceptedTermsError = false,
+            showBackDialog = false, onShowBackDialogChanged = {},
+            onConfirmBack = {}, onCreateAccount = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RegisterScreenPreview() {
+    DelSoundTheme { RegisterScreen(onNavigateToLogin = {}) }
+}</code></pre>
+
+  <div class="checkpoint">
+    <div class="checkpoint-title">✅ Checkpoint — Cap. 5</div>
+    <ul>
+      <li>All 7 fields render correctly with labels and error states</li>
+      <li>Tapping the calendar icon opens the DatePickerDialog with a full month view</li>
+      <li>Selecting a date and tapping Accept populates the birth date field (e.g. "05/14/1995")</li>
+      <li>Tapping the genre field opens the dropdown with all 6 options</li>
+      <li>Selecting a genre closes the dropdown and populates the field</li>
+      <li>Pressing the system back button with data in the form shows the AlertDialog</li>
+      <li>Tapping "Stay" closes the dialog and keeps all form data intact</li>
+      <li>Tapping "Go Back" closes the dialog and navigates back to Login</li>
+      <li>The TopAppBar back arrow also triggers the confirmation dialog when the form has data</li>
+      <li>Tapping "Create Account" with all fields valid shows the success Snackbar</li>
+      <li>Tapping "Create Account" with empty fields shows red borders and error messages on all empty fields</li>
+      <li>Rotating the device preserves all form data</li>
+    </ul>
+  </div>
+</section>
+
+<hr>
+
+<!-- CAP 6 -->
+<section class="section" id="cap6">
+  <h2 class="section-title"><span class="cn">6</span>Navigation</h2>
+  <div class="section-subtitle">Connecting Login, Register and Main Screen with SoundInRoutes and SoundInNavGraph</div>
+  <p>In this chapter we connect all three screens using Navigation Compose. Three files are involved: <code>SoundInRoutes</code> declares route constants, <code>SoundInNavGraph</code> defines all destinations and their connections, and <code>MainActivity</code> creates the <code>NavController</code>.</p>
+
+  <h3 class="step-title" data-step="1">Create <code>SoundInRoutes.kt</code></h3>
+  <p>Create a new package called <code>navigation</code> inside <code>ui</code>, then create <code>SoundInRoutes.kt</code> inside it. This object holds all route strings as constants, eliminating the risk of typos when navigating.</p>
+
+  <div class="location-hint">File location: <code>ui/navigation/SoundInRoutes.kt</code> — create the <code>navigation</code> package first, then create this file inside it. This file will also hold routes for UI Avanzado.</div>
+  <div class="code-label">ui/navigation/SoundInRoutes.kt (complete)</div>
+  <pre><code class="language-kotlin">object SoundInRoutes {
+    // ── AUTHENTICATION SCREENS (UI Intermedio) ──
+    const val LOGIN = "login"         // Starting destination — shown when app launches
+    const val REGISTER = "register"   // Navigated to from Login
+    const val MAIN = "main"           // Post-authentication destination
+
+    // ── MAIN APP TABS (UI Avanzado) ──
+    const val LIBRARY = "library"
+    const val PROFILE = "profile"
+    const val SEARCH = "search"
+
+    // ── DETAIL SCREEN WITH ARGUMENT (UI Avanzado) ──
+    const val PLAYLIST_DETAIL = "playlistDetail"
+}</code></pre>
+
+  <div class="param-list">
+    <div class="param-list-title">SoundInRoutes explained</div>
+    <div class="param-item"><span class="param-name">object SoundInRoutes</span><span class="param-desc">An <code>object</code> in Kotlin is a singleton — one instance shared across the entire app. All route strings are accessible as <code>SoundInRoutes.LOGIN</code> without creating an instance.</span></div>
+    <div class="param-item"><span class="param-name">const val</span><span class="param-desc">Compile-time constants — their values are inlined at compilation. More efficient than regular <code>val</code> and cannot be changed at runtime.</span></div>
+  </div>
+
+  <h3 class="step-title" data-step="2">Create <code>SoundInNavGraph.kt</code></h3>
+  <p>Create <code>SoundInNavGraph.kt</code> in the same <code>ui/navigation</code> package. This composable is the central hub of all navigation — it declares every screen as a destination and defines how they connect.</p>
+
+  <div class="location-hint">File location: <code>ui/navigation/SoundInNavGraph.kt</code> — same folder as <code>SoundInRoutes.kt</code>. This composable is called from <code>MainActivity</code>.</div>
+  <div class="code-label">ui/navigation/SoundInNavGraph.kt (complete)</div>
+  <pre><code class="language-kotlin">@Composable
+fun SoundInNavGraph(
+    navController: NavHostController,      // The NavController created in MainActivity — passed down
+    sessionViewModel: UserSessionViewModel // Shared across Login and Profile — passed from MainActivity
+) {
+    NavHost(
+        navController = navController,
+        startDestination = SoundInRoutes.LOGIN // App always starts on the Login Screen
+    ) {
+
+        // ── LOGIN DESTINATION ──
+        composable(SoundInRoutes.LOGIN) {
+            LoginScreen(
+                sessionViewModel = sessionViewModel,
+                onNavigationToRegister = {
+                    // Navigate to Register — adds Register to the back stack on top of Login
+                    navController.navigate(SoundInRoutes.REGISTER)
+                },
+                onLoginSuccess = {
+                    navController.navigate(SoundInRoutes.MAIN) {
+                        // Remove Login from the back stack after successful login
+                        // inclusive = true means Login itself is removed (not just screens above it)
+                        popUpTo(SoundInRoutes.LOGIN) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // ── REGISTER DESTINATION ──
+        composable(SoundInRoutes.REGISTER) {
+            RegisterScreen(
+                onNavigateToLogin = {
+                    navController.navigate(SoundInRoutes.LOGIN) {
+                        // Remove Register from the back stack when navigating back to Login
+                        popUpTo(SoundInRoutes.LOGIN) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // ── MAIN DESTINATION ──
+        composable(SoundInRoutes.MAIN) {
+            MainScreen(
+                sessionViewModel = sessionViewModel,
+                onLogout = {
+                    navController.navigate(SoundInRoutes.LOGIN) {
+                        // Remove Main from the back stack on logout
+                        // The user cannot press back and return to Main after logging out
+                        popUpTo(SoundInRoutes.MAIN) { inclusive = true }
+                    }
+                }
+            )
+        }
+    }
+}</code></pre>
+
+  <div class="param-list">
+    <div class="param-list-title">Navigation concepts explained</div>
+    <div class="param-item"><span class="param-name">NavHost</span><span class="param-desc">The container that manages which destination is currently visible. It uses the <code>NavController</code> to track the back stack and renders the correct composable based on the current route.</span></div>
+    <div class="param-item"><span class="param-name">startDestination</span><span class="param-desc">The first screen shown when the app launches. Set to <code>SoundInRoutes.LOGIN</code> so unauthenticated users always land on the login screen.</span></div>
+    <div class="param-item"><span class="param-name">composable(route)</span><span class="param-desc">Registers a screen as a navigation destination. The composable inside the lambda is rendered when the NavHost navigates to that route.</span></div>
+    <div class="param-item"><span class="param-name">popUpTo(route) { inclusive = true }</span><span class="param-desc">Removes all screens from the back stack up to and including the specified route. After login, <code>popUpTo(LOGIN) { inclusive = true }</code> removes Login so pressing back on Main does not return to Login.</span></div>
+  </div>
+
+  <h3 class="step-title" data-step="3">Update <code>MainActivity.kt</code></h3>
+  <p>The <code>NavController</code> must be created at the highest level — in <code>MainActivity</code>. Never create it inside a composable that is not at the root of the navigation tree.</p>
+
+  <div class="location-hint">Open <code>MainActivity.kt</code> and update the <code>setContent { }</code> block. Add the <code>sessionViewModel</code> declaration before <code>DelSoundTheme</code> and replace the content with the code below.</div>
+  <div class="code-label">MainActivity.kt (complete setContent block)</div>
+  <pre><code class="language-kotlin">class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            // sessionViewModel is created at Activity level so it outlives any individual screen
+            // All screens that need session data receive it as a parameter
+            val sessionViewModel: UserSessionViewModel = viewModel()
+
+            DelSoundTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    // NavController is created here at the top level and passed to SoundInNavGraph
+                    // Never create NavController inside a composable deeper in the hierarchy
+                    val navController = rememberNavController()
+                    SoundInNavGraph(
+                        navController = navController,
+                        sessionViewModel = sessionViewModel
+                    )
+                }
+            }
+        }
+    }
+}</code></pre>
+
+  <div class="checkpoint">
+    <div class="checkpoint-title">✅ Checkpoint — Cap. 6 (Final App)</div>
+    <ul>
+      <li>App launches on the Login Screen — not Register, not Main</li>
+      <li>Tapping "Don't have an account? Register" navigates to Register Screen</li>
+      <li>Pressing the system back button from Register returns to Login</li>
+      <li>Successful login navigates to Main Screen</li>
+      <li>Pressing back from Main Screen does NOT return to Login or Register</li>
+      <li>Tapping "Log Out" in Profile returns to Login and the back button does not return to Main</li>
+    </ul>
+  </div>
+</section>
+
+<hr>
+
+<!-- ASSIGNMENTS -->
+<section class="section" id="act1">
+  <h2 class="section-title"><span class="cn">A</span>Assignments</h2>
+  <div class="section-subtitle">Four deliverables aligned with the course chapters</div>
+
+  <div class="assignment">
+    <div class="assignment-header">
+      <div class="assignment-title">Activity 1 — From Figma to Compose</div>
+      <div class="assignment-badge">Due: Class 3</div>
+    </div>
+    <p><strong>Description:</strong> You are building the Login Screen of the SoundIn app from scratch, applying Material Design 3 principles and Jetpack Compose best practices.</p>
+    <h4>Requirements</h4>
+    <ul>
+      <li>A <code>TopAppBar</code> with the SoundIn app name and the correct SoundIn color theme</li>
+      <li>An email <code>OutlinedTextField</code> with proper <code>KeyboardType.Email</code></li>
+      <li>A password <code>OutlinedTextField</code> with a visibility toggle icon</li>
+      <li>Validation error messages when the email or password format is incorrect</li>
+      <li>A <code>Switch</code> for the "Remember Session" option</li>
+      <li>A "Log In" button that validates inputs and shows a result <code>Snackbar</code></li>
+      <li>A "Don't have an account? Register" <code>TextButton</code> at the bottom</li>
+    </ul>
+    <h4>Evidence</h4>
+    <ul>
+      <li>Screenshot 1: Login Screen — initial state (empty form, no errors)</li>
+      <li>Screenshot 2: Login Screen — error state (<code>isError</code> active on both fields)</li>
+      <li>Screenshot 3: Login Screen — success state (Snackbar "Welcome to SoundIn" visible)</li>
+    </ul>
+    <div class="extra-challenge">
+      <div class="extra-challenge-title">⭐ Extra Challenge 1 — Snackbar with Dismiss Action</div>
+      <ul>
+        <li>Add <code>actionLabel = "Dismiss"</code> to both Snackbars (success and error)</li>
+        <li>Use <code>SnackbarDuration.Short</code> to control how long it stays visible</li>
+        <li>Make sure navigation only happens <strong>after</strong> the success Snackbar disappears — <code>showSnackbar()</code> is <code>suspend</code> and pauses the coroutine until dismissed</li>
+      </ul>
+    </div>
+    <div class="extra-challenge">
+      <div class="extra-challenge-title">⭐ Extra Challenge 2 — Brand Icon in TopAppBar</div>
+      <ul>
+        <li>Add a music-related icon next to "SoundIn" using the <code>navigationIcon</code> parameter of <code>TopAppBar</code></li>
+        <li>Choose from: <code>Icons.Default.MusicNote</code>, <code>Icons.Default.Headphones</code> or <code>Icons.Default.LibraryMusic</code></li>
+        <li>Apply <code>tint = MaterialTheme.colorScheme.onPrimary</code> so the icon matches the TopAppBar text color</li>
+        <li>Provide a meaningful <code>contentDescription</code> for accessibility (TalkBack users)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="act2">
+  <div class="assignment">
+    <div class="assignment-header">
+      <div class="assignment-title">Activity 2 — State Management and ViewModels</div>
+      <div class="assignment-badge">Due: Class 4</div>
+    </div>
+    <p><strong>Description:</strong> Ensure the app handles state correctly and provides a smooth experience even when the device is rotated.</p>
+    <h4>Requirements — LoginViewModel</h4>
+    <ul>
+      <li>Create a <code>LoginViewModel</code> with <code>MutableStateFlow</code> for email, password, remember session, email error and password error</li>
+      <li>Expose all state using <code>StateFlow</code> with <code>asStateFlow()</code></li>
+      <li>Observe state in <code>LoginScreen</code> using <code>collectAsStateWithLifecycle()</code></li>
+      <li>Move the validation logic to <code>validateAndLogin()</code> inside the ViewModel</li>
+    </ul>
+    <h4>Requirements — State Preservation</h4>
+    <ul>
+      <li>Verify that the email and password fields maintain their values after rotating the device</li>
+    </ul>
+    <h4>Evidence</h4>
+    <ul>
+      <li>Screenshot: Login Screen in <strong>landscape mode</strong> with email and password fields still containing the data entered before rotating</li>
+      <li>Written explanation covering: why the data is preserved after rotation, what would happen without the ViewModel, and the difference between <code>MutableStateFlow</code> and <code>StateFlow</code></li>
+    </ul>
+    <div class="extra-challenge">
+      <div class="extra-challenge-title">⭐ Extra Challenge — Reset Form Button</div>
+      <ul>
+        <li>Add a <code>resetForm()</code> function to <code>LoginViewModel</code> that resets all fields and errors to their initial values</li>
+        <li>Add an <code>IconButton</code> with <code>Icons.Default.Refresh</code> in the <code>actions</code> parameter of the <code>TopAppBar</code></li>
+        <li>When tapped, all fields and all error states must clear immediately</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="act3">
+  <div class="assignment">
+    <div class="assignment-header">
+      <div class="assignment-title">Activity 3 — Building the Register Screen</div>
+      <div class="assignment-badge">Due: Class 4</div>
+    </div>
+    <p><strong>Description:</strong> Expand SoundIn by building the Register Screen with advanced Material 3 components and its own ViewModel.</p>
+    <h4>Requirements — Register Screen UI</h4>
+    <ul>
+      <li>Name — <code>OutlinedTextField</code></li>
+      <li>Email — <code>OutlinedTextField</code> with <code>KeyboardType.Email</code></li>
+      <li>Password — <code>OutlinedTextField</code> with <code>PasswordVisualTransformation</code> and visibility toggle</li>
+      <li>Confirm Password — <code>OutlinedTextField</code> with its own visibility toggle</li>
+      <li>Birth Date — <code>DatePickerDialog</code> opened via a trailing calendar icon</li>
+      <li>Favorite Genre — <code>ExposedDropdownMenuBox</code> with at least 5 genre options</li>
+      <li>Accepted Terms — <code>Switch</code></li>
+      <li>"Create Account" button that validates all fields and shows a <code>Snackbar</code> on success</li>
+    </ul>
+    <h4>Requirements — Back Navigation Protection</h4>
+    <ul>
+      <li>Use <code>BackHandler</code> to intercept the system back button when the form has data</li>
+      <li>Show an <code>AlertDialog</code> asking the user to confirm before leaving</li>
+      <li>"Stay" keeps the user on the form; "Go Back" navigates away</li>
+      <li>The TopAppBar back arrow must also trigger the same confirmation flow</li>
+    </ul>
+    <h4>Requirements — RegisterViewModel</h4>
+    <ul>
+      <li>Create a <code>RegisterViewModel</code> with <code>MutableStateFlow</code> for all registration fields and their error states</li>
+      <li>Expose all state using <code>StateFlow</code> with <code>asStateFlow()</code></li>
+      <li>Implement <code>validateAndRegister()</code> that validates all fields before submitting</li>
+    </ul>
+    <h4>Evidence</h4>
+    <ul>
+      <li>Screenshot 1: Register Screen with all fields empty — initial state</li>
+      <li>Screenshot 2: Register Screen showing validation errors after tapping "Create Account" with empty fields</li>
+      <li>Screenshot 3: Register Screen with all fields correctly filled and the success Snackbar visible</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="act4">
+  <div class="assignment">
+    <div class="assignment-header">
+      <div class="assignment-title">Activity 4 — Connecting SoundIn with Navigation</div>
+      <div class="assignment-badge">Due: After Class 4</div>
+    </div>
+    <p><strong>Description:</strong> Connect all screens using Navigation Compose and complete the app with a Main Screen as the post-authentication destination.</p>
+    <h4>Requirements — Navigation Setup</h4>
+    <ul>
+      <li>Create a <code>SoundInRoutes</code> object with all route constants</li>
+      <li>Create a <code>SoundInNavGraph</code> composable with a <code>NavHost</code> containing all three destinations</li>
+      <li>Set up <code>NavController</code> in <code>MainActivity</code> and pass it to <code>SoundInNavGraph</code></li>
+      <li>Pass navigation callbacks to composables — do not pass the <code>NavController</code> directly to screens</li>
+    </ul>
+    <h4>Requirements — Screen Connections</h4>
+    <ul>
+      <li>Navigate to Register when tapping "Don't have an account? Register"</li>
+      <li>Navigate back to Login when pressing the system back button from Register</li>
+      <li>Navigate to <code>MainScreen</code> after successful login with <code>popUpTo(LOGIN) { inclusive = true }</code></li>
+      <li>Navigate to <code>MainScreen</code> after successful registration</li>
+      <li>Tapping "Log Out" navigates to Login with <code>popUpTo(MAIN) { inclusive = true }</code></li>
+    </ul>
+    <h4>Requirements — Main Screen</h4>
+    <ul>
+      <li>Build a simple <code>MainScreen</code> composable that displays a welcome message</li>
+    </ul>
+    <h4>Evidence</h4>
+    <ul>
+      <li>Screenshot 1: <code>MainScreen</code> visible after a successful login</li>
+      <li>Screenshot 2: Code screenshot of <code>SoundInNavGraph</code> showing the <code>NavHost</code> with all three destinations</li>
+      <li>Screenshot 3: Code screenshot of the <code>SoundInRoutes</code> object showing all route constants</li>
+    </ul>
+  </div>
+</section>
+
+<hr>
+
+<!-- FORUMS -->
+<section class="section" id="forums">
+  <h2 class="section-title"><span class="cn">D</span>Discussion Forums</h2>
+  <div class="section-subtitle">Two forums — 10% of overall grade</div>
+
+  <div class="assignment">
+    <div class="assignment-header">
+      <div class="assignment-title">Discussion Forum 1 — Material Design</div>
+      <div class="assignment-badge">Due: Class 3 by 11:59 p.m.</div>
+    </div>
+    <p>To receive full credit participate <strong>twice</strong>: an initial post answering the prompt, and a reply to your professor's feedback.</p>
+    <br>
+    <p><strong>Prompt:</strong> Do you know any applications that use Material Design? What apps do you think have the most appealing designs?</p>
+  </div>
+
+  <div class="assignment" style="margin-top:0;">
+    <div class="assignment-header">
+      <div class="assignment-title">Discussion Forum 2 — UX Decisions in SoundIn</div>
+      <div class="assignment-badge">Due: Class 3 by 11:59 p.m.</div>
+    </div>
+    <p>To receive full credit participate <strong>twice</strong>: an initial post answering the prompt, and a reply to your professor's feedback.</p>
+    <h4>UX Features Built in SoundIn</h4>
+    <p style="font-size:13px;"><strong>Validation and real-time feedback:</strong> <code>isError</code> shows exactly which field is wrong — <code>supportingText</code> explains what to fix — <code>Snackbar</code> with <code>actionLabel = "Dismiss"</code> gives the user control.</p>
+    <p style="font-size:13px;"><strong>User data protection:</strong> <code>BackHandler</code> + <code>AlertDialog</code> prevents accidental data loss — <code>Switch</code> "Remember Session" lets the user decide.</p>
+    <p style="font-size:13px;"><strong>Smart inputs:</strong> Password visibility toggle — <code>KeyboardType.Email</code> — <code>DatePickerDialog</code> — <code>ExposedDropdownMenuBox</code> — <code>contentDescription</code> on all icons for TalkBack.</p>
+    <h4>Discussion Questions</h4>
+    <ol style="font-size:14px;">
+      <li><strong>Which UX decision in SoundIn do you think has the biggest impact on the user?</strong> Choose one feature and explain why it matters most.</li>
+      <li><strong>Think about an app you use every day.</strong> Can you identify a UX decision similar to something you built in SoundIn? Describe it and explain how it improves the experience.</li>
+    </ol>
+  </div>
+</section>
+
+<hr>
+
+<!-- FINAL EXAM -->
+<section class="section" id="exam">
+  <h2 class="section-title"><span class="cn">E</span>Final Exam</h2>
+  <div class="section-subtitle">15 questions — delivered as a take-home assessment after Class 4</div>
+
+  <table>
+    <tr><th>Type</th><th>Count</th><th>Topics</th></tr>
+    <tr><td>Multiple Choice</td><td>7</td><td><code>MaterialTheme</code>, <code>Scaffold</code>, <code>StateFlow</code>, <code>NavHost</code>, <code>popUpTo</code>, <code>ViewModel</code>, <code>collectAsStateWithLifecycle</code></td></tr>
+    <tr><td>Multiple Selection</td><td>4</td><td><code>OutlinedTextField</code> parameters, <code>BackHandler</code>, <code>DatePickerDialog</code>, <code>ExposedDropdownMenuBox</code></td></tr>
+    <tr><td>True / False</td><td>4</td><td><code>MutableStateFlow</code> vs <code>StateFlow</code>, <code>inclusive = true</code>, <code>composable()</code>, rotation behavior</td></tr>
+  </table>
+
+  <div class="callout warning">
+    <div class="callout-title">⚠️ Note</div>
+    <p>Optional Extra Challenges from Activities 1 and 2 are <strong>not</strong> part of the Final Exam. The exam covers only the core content of Chapters 1 through 6.</p>
+  </div>
+
+  <div class="checkpoint">
+    <div class="checkpoint-title">✅ Complete App — Final Verification Checklist</div>
+    <ul>
+      <li>App launches on Login Screen — not Register, not Main</li>
+      <li>Login validates email format and password length (minimum 8 characters)</li>
+      <li>Login shows error Snackbar for invalid input without navigating</li>
+      <li>Login shows success message and navigates to Main Screen after valid input</li>
+      <li>Register Screen has all 7 fields: name, email, password, confirm password, birth date, genre, accepted terms</li>
+      <li>DatePickerDialog opens, allows date selection, and populates the birth date field</li>
+      <li>ExposedDropdownMenuBox shows all genre options and closes after selection</li>
+      <li>BackHandler shows AlertDialog when pressing back with data in any field</li>
+      <li>"Stay" keeps the user on the form with all data intact</li>
+      <li>"Go Back" navigates back and discards the form</li>
+      <li>TopAppBar back arrow triggers the same confirmation flow as the system back button</li>
+      <li>Successful registration shows success Snackbar and navigates back to Login</li>
+      <li>Pressing back from Main Screen does not return to Login or Register</li>
+      <li>Rotating the device preserves all form data on both Login and Register screens</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<script>
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.2 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
